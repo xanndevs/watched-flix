@@ -1,0 +1,10 @@
+{
+  "name": "I Already Wathed This Netflix",
+  "description": "An extension to hide the things you have watched",
+  "version": "0.1",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "src/WatchedFlix.png"
+  }
+}
