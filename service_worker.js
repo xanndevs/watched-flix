@@ -30,7 +30,6 @@ chrome.runtime.onInstalled.addListener(async () => {
 chrome.runtime.onInstalled.addListener(function(details){
     if(details.reason == "install"){
         chrome.storage.sync.set({ showData: [] }).then(() => {
-        //console.log("Value is set");
       });
     }else if(details.reason == "update"){
         //var thisVersion = chrome.runtime.getManifest().version;

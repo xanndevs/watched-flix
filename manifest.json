@@ -18,6 +18,10 @@
       "js": ["content_editor.js"],
       "run_at": "document_idle"
   }],
+  "background": {
+    "service_worker": "service_worker.js",
+    "type": "module"
+  },
   "side_panel": {
     "default_path": "index.html"
   },

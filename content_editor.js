@@ -150,8 +150,10 @@ const startWatching = (elem) => {
 
     chrome.storage.sync.get(null, (elem) => {
       elem = elem.showData;
+      elem  = elem.map((e) => e[0]);
 
-      if (elem.indexOf(showData) > -1) {
+
+      if (elem.indexOf(showData[0]) > -1) {
         imageElem.src = tickIconURL;
       }
       else {
@@ -169,6 +171,8 @@ const startWatching = (elem) => {
   const handleOverlayInjection = (titleElem, showData) => {
     chrome.storage.sync.get(null, (elem) => {
       elem = elem.showData;
+      elem  = elem.map((e) => e[0]);
+
       if (elem.includes(showData)) {
         //console.log("Found the target element!")
         if (titleElem.querySelector(".WatchFlix-Overlay") != null) {
@@ -202,8 +206,14 @@ const startWatching = (elem) => {
   }
 
   const getShowDataFromModal = (elem) => {
-    const showURL = elem.querySelector("div.focus-trap-wrapper.previewModal--wrapper.mini-modal > div > div.previewModal--info > a")
-    return showURL.href.match(/\/title\/(\d+)/)[1];
+    let showId = elem.querySelector("div.focus-trap-wrapper.previewModal--wrapper.mini-modal > div > div.previewModal--info > a")  
+    showId = showId.href.match(/\/title\/(\d+)/)[1]
+
+    const showImageElement = document.querySelector("div.focus-trap-wrapper.previewModal--wrapper.mini-modal > div > div.previewModal--player_container.has-smaller-buttons.mini-modal.not-playable > div.videoMerchPlayer--boxart-wrapper > img:nth-child(1)");
+    const showUrl = showImageElement.src;
+    const showTitle = showImageElement.alt;
+
+    return [showId, showTitle, showUrl];
   }
 
   const getShowDataFromTitle = (elem) => {
@@ -232,8 +242,8 @@ const startWatching = (elem) => {
     // WIP
     chrome.storage.sync.get(null, (elem) => {
       elem = elem.showData;
-
-      const index = elem.indexOf(data);
+      let tempElem = elem.map((e) => e[0]);
+      const index = tempElem.indexOf(data[0]);
       if (index > -1) { // only splice array when item is found
         elem.splice(index, 1); // 2nd parameter means remove one item only
       }
@@ -247,5 +257,14 @@ const startWatching = (elem) => {
 
 
 
-
 }
+
+window.addEventListener("popstate", () => {
+  a = setInterval(() => {
+  const mainView = document.querySelector("#main-view")
+  if (document.querySelector(".profiles-gate-container") == null && mainView != null) {
+    startWatching(mainView);
+    clearInterval(a);
+  }
+}, 500);
+});
