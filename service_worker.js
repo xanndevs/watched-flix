@@ -24,3 +24,16 @@ chrome.runtime.onInstalled.addListener(async () => {
     }
   }
 });
+
+
+// Check whether new version is installed
+chrome.runtime.onInstalled.addListener(function(details){
+    if(details.reason == "install"){
+        chrome.storage.sync.set({ showData: [] }).then(() => {
+        //console.log("Value is set");
+      });
+    }else if(details.reason == "update"){
+        //var thisVersion = chrome.runtime.getManifest().version;
+        //console.log("Updated from " + details.previousVersion + " to " + thisVersion + "!");
+    }
+});
