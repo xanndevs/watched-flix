@@ -125,10 +125,10 @@ const startWatching = (elem) => {
   observer.observe(targetNode, config);
 
   const handleButtonInjection = (elem, showData) => {
-    const watchFlixIconURL = chrome.runtime.getURL("src/WatchFlix_transparent.png");
-    const tickIconURL = chrome.runtime.getURL("src/Tick_transparent.png");
+    const watchFlixIconURL = chrome.runtime.getURL("src/WatchFlix-short-transparent.png");
+    const tickIconURL = chrome.runtime.getURL("src/Tick-transparent.png");
 
-    const buttons = elem.querySelector(".previewModal--player_container.has-smaller-buttons.mini-modal.not-playable");
+    const buttons = elem.querySelector(".previewModal--player_container.has-smaller-buttons.mini-modal");
 
     const watchedButton = document.createElement("button");
 
@@ -150,7 +150,7 @@ const startWatching = (elem) => {
 
     chrome.storage.sync.get(null, (elem) => {
       elem = elem.showData;
-      elem  = elem.map((e) => e[0]);
+      elem = elem.map((e) => e[0]);
 
 
       if (elem.indexOf(showData[0]) > -1) {
@@ -171,7 +171,7 @@ const startWatching = (elem) => {
   const handleOverlayInjection = (titleElem, showData) => {
     chrome.storage.sync.get(null, (elem) => {
       elem = elem.showData;
-      elem  = elem.map((e) => e[0]);
+      elem = elem.map((e) => e[0]);
 
       if (elem.includes(showData)) {
         //console.log("Found the target element!")
@@ -193,7 +193,7 @@ const startWatching = (elem) => {
 
       }
       //Does not include the thing... if it has the overlay, just remove it.
-      else{
+      else {
         overlay = titleElem.querySelector(".WatchFlix-Overlay");
         if (overlay != null) {
           overlay.remove();
@@ -204,16 +204,24 @@ const startWatching = (elem) => {
 
 
   }
-
   const getShowDataFromModal = (elem) => {
-    let showId = elem.querySelector("div.focus-trap-wrapper.previewModal--wrapper.mini-modal > div > div.previewModal--info > a")  
+    let showId = elem.querySelector("div.focus-trap-wrapper.previewModal--wrapper.mini-modal > div > div.previewModal--info > a")
     showId = showId.href.match(/\/title\/(\d+)/)[1]
 
-    const showImageElement = document.querySelector("div.focus-trap-wrapper.previewModal--wrapper.mini-modal > div > div.previewModal--player_container.has-smaller-buttons.mini-modal.not-playable > div.videoMerchPlayer--boxart-wrapper > img:nth-child(1)");
-    const showUrl = showImageElement.src;
-    const showTitle = showImageElement.alt;
 
-    return [showId, showTitle, showUrl];
+
+    const titleElement = elem.querySelector("div.focus-trap-wrapper.previewModal--wrapper.mini-modal > div > div.previewModal--player_container.has-smaller-buttons.mini-modal > div.videoMerchPlayer--boxart-wrapper")
+    
+    const altValues = Array.from(titleElement.querySelectorAll('[alt]'))
+    .map(el => el.getAttribute('alt'))
+    .find(alt => alt?.trim());
+    
+    const showImageElement = elem.querySelector("div.focus-trap-wrapper.previewModal--wrapper.mini-modal > div > div.previewModal--player_container.has-smaller-buttons.mini-modal > div.videoMerchPlayer--boxart-wrapper > img:nth-child(1)")
+    const showUrl = showImageElement.src;
+
+
+
+    return [showId, altValues, showUrl];
   }
 
   const getShowDataFromTitle = (elem) => {
@@ -261,10 +269,10 @@ const startWatching = (elem) => {
 
 window.addEventListener("popstate", () => {
   a = setInterval(() => {
-  const mainView = document.querySelector("#main-view")
-  if (document.querySelector(".profiles-gate-container") == null && mainView != null) {
-    startWatching(mainView);
-    clearInterval(a);
-  }
-}, 500);
+    const mainView = document.querySelector("#main-view")
+    if (document.querySelector(".profiles-gate-container") == null && mainView != null) {
+      startWatching(mainView);
+      clearInterval(a);
+    }
+  }, 500);
 });

@@ -78,7 +78,6 @@ const clickHandler = () => {
 }
 
 class Modal {
-  
   constructor(id, title, imageUrl) {
     this.isClicked = false;
 
@@ -87,7 +86,7 @@ class Modal {
     this.element.classList.add(
       "h-auto",
       "w-full",
-      "max-w-40",
+      "max-w-14",
       "rounded-xs",
       "cursor-pointer",
       "overflow-hidden",
@@ -132,12 +131,12 @@ class Modal {
 
     this.removeIcon = document.createElement("img");
     this.removeIcon.src = "src/delete.svg";
-    this.removeIcon.classList.add("h-6", "w-6");
+    this.removeIcon.classList.add("h-2", "w-2");
     this.removeIcon.style.filter = "brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(0%) hue-rotate(148deg) brightness(102%) contrast(103%)";
 
     this.redirectIcon = document.createElement("img");
     this.redirectIcon.src = "src/redirect.svg";
-    this.redirectIcon.classList.add("h-6", "w-6");
+    this.redirectIcon.classList.add("h-2", "w-2");
     this.redirectIcon.style.filter = "brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(0%) hue-rotate(148deg) brightness(102%) contrast(103%)";
 
     this.redirectActionButton = document.createElement("a");
@@ -219,6 +218,17 @@ class Modal {
 }
  
 
+class IndexModal {
+  constructor (id, title, imageUrl) {
+    this.theModal = new Modal(id, title, imageUrl)
+
+    this.theModal.element.classList.remove("max-w-14");
+    this.theModal.element.classList.add("max-w-32");
+    
+
+    return this.theModal;
+  }
+}
 
 
 showData();

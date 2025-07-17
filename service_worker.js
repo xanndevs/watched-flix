@@ -32,7 +32,10 @@ chrome.runtime.onInstalled.addListener(function(details){
         chrome.storage.sync.set({ showData: [] }).then(() => {
       });
     }else if(details.reason == "update"){
-        //var thisVersion = chrome.runtime.getManifest().version;
-        //console.log("Updated from " + details.previousVersion + " to " + thisVersion + "!");
+        
     }
+});
+
+chrome.action.onClicked.addListener((tab) => {
+  chrome.tabs.create({ url: chrome.runtime.getURL("sidebar.html") });
 });
