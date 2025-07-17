@@ -23,7 +23,7 @@
     "type": "module"
   },
   "side_panel": {
-    "default_path": "sidebar.html"
+    "default_path": "index.html"
   },
   
   "permissions": ["sidePanel", "scripting", "activeTab", "storage"],
