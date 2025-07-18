@@ -1,4 +1,73 @@
 let isSettingsOn = false;
+let config = {};
+
+
+var css = `
+  
+    #settingsContainer{
+
+      input[type=color]{
+        width:100%;
+        height:20px;
+        border-radius:4px;
+      }
+
+
+      
+      input[type="range"] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        width: 100%;
+        background-color: transparent;
+
+        &:focus {
+          outline-color: #f8b195;
+        }
+      }
+
+      input[type="range"]::-webkit-slider-runnable-track {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 3px;
+        background: white
+        
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      border: 2px solid rgb(220,220,220);
+      border-radius: 50%;
+      height: 20px;
+      width: 20px;
+      position: relative;
+      bottom: 8px;
+      background: white;
+      cursor: grab;
+        
+        &:active {
+          cursor: grabbing;
+        }
+    }
+
+
+    
+  
+
+    }
+
+
+`;
+var style = document.createElement('style');
+
+if (style.styleSheet) {
+  style.styleSheet.cssText = css;
+} else {
+  style.appendChild(document.createTextNode(css));
+}
+document.getElementsByTagName('head')[0].appendChild(style);
+
 
 const showData = () => {
   chrome.storage.sync.get("showData", function (allShows) {
@@ -32,6 +101,34 @@ const showData = () => {
   });
 };
 
+const injectSettings = (isUpdate = false) => {
+  chrome.storage.sync.get("config", (response) => {
+    config = response.config
+
+    Object.keys(config).forEach((elem) => { document.documentElement.style.setProperty(["--", elem].join(""), config[elem][0]) })
+
+    function doPageUpdate() {
+      // Send a message to the content script in the current tab
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: "updatePage" });
+      });
+    }
+    doPageUpdate();
+    if (!isUpdate)
+      injectSettingsDOMTree();
+  });
+}
+
+const injectSettingsDOMTree = () => {
+  const container = document.getElementById("settingsContainer");
+  console.log(container);
+
+  Object.keys(config).forEach((elem) => {
+    container.appendChild(new SettingsOption(config[elem][2], config[elem][1], config[elem][0], elem));
+  });
+
+}
+
 //when storage sync changes
 chrome.storage.onChanged.addListener(function (changes, area) {
   if (area === "sync" && changes.showData) {
@@ -39,7 +136,7 @@ chrome.storage.onChanged.addListener(function (changes, area) {
   }
 });
 
-document.getElementById("input").addEventListener("keypress", function(event) {
+document.getElementById("input").addEventListener("keypress", function (event) {
   console.log()
   if (event.key === "Enter") {
     // Cancel the default action, if needed
@@ -47,21 +144,21 @@ document.getElementById("input").addEventListener("keypress", function(event) {
     // Trigger the button element with a click
     showData();
     //this.blur();
-    
+
   }
 });
 
 
-document.getElementById("searchButton").addEventListener("click", function(event) {
+document.getElementById("searchButton").addEventListener("click", function (event) {
   showData();
 });
 
-document.getElementById("settingsButton").addEventListener("click", function(event) {
+document.getElementById("settingsButton").addEventListener("click", function (event) {
   toggleSettingsMenu();
 
 });
 
-document.getElementById("settingsCloseButton").addEventListener("click", function(event) {
+document.getElementById("settingsCloseButton").addEventListener("click", function (event) {
   toggleSettingsMenu();
 
 });
@@ -78,7 +175,7 @@ const clickHandler = () => {
 }
 
 class Modal {
-  
+
   constructor(id, title, imageUrl) {
     this.isClicked = false;
 
@@ -199,7 +296,7 @@ class Modal {
     this.buttons.classList.toggle("!top-[65.1%]", this.isClicked);
   };
 
-  
+
   handleRemoveShow = (data) => {
     // WIP
     chrome.storage.sync.get(null, (elem) => {
@@ -217,11 +314,43 @@ class Modal {
     });
   }
 }
- 
+
+class SettingsOption {
+
+  constructor(textPhrase, inputOptions, inputValue, inputIdentifier) {
+    this.wrapper = document.createElement("div")
+    this.wrapper.classList.add("option", "min-w-40", "flex-1", "h-auto", "py-1", "flex", "flex-row", "flex-wrap", "items-start", "justify-between", "gap-1");
+    this.wrapper.name = inputIdentifier;
+
+    this.text = document.createElement("p");
+    this.text.innerText = textPhrase;
+
+    this.input = document.createElement("input");
+    //this.input.type = inputOptions.type;
+    Object.keys(inputOptions).forEach((option) => { this.input[option] = inputOptions[option]; })
+    this.input.value = inputValue;
+    this.input.id = inputIdentifier;
+    this.input.classList.add("border-none", "h-2")
+    this.input.addEventListener("change", (e) => this.updateSettings(e, inputIdentifier));
+
+    this.wrapper.appendChild(this.text);
+    this.wrapper.appendChild(this.input);
+
+    return this.wrapper;
+  }
+  updateSettings(e, id) {
+    console.log(e);
+    config[id] = [e.target.value, config[id][1], config[id][2]];
+    chrome.storage.sync.set({ "config": config });
+    injectSettings(true);
+  }
+}
 
 
 
 showData();
+injectSettings();
+
 
 
 

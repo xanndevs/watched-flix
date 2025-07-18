@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "WatchFlix",
-  "version": "0.3",
+  "version": "0.3.3",
   "icons": {
     "128": "src/128x128.png"
   },
@@ -22,9 +22,7 @@
     "service_worker": "service_worker.js",
     "type": "module"
   },
-  "side_panel": {
-    "default_path": "index.html"
-  },
+
   
   "permissions": ["sidePanel", "scripting", "activeTab", "storage"],
   "web_accessible_resources": [

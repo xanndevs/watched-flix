@@ -44,7 +44,7 @@ var css = `
   }
 
   .WatchFlix-Overlay{
-    background: rgba(25,25,25,0.9);
+    background: transparent;
     z-index: 99;
     position: absolute;
     top: 0;
@@ -59,8 +59,19 @@ var css = `
     > h2 {
       color:white;
       text-shadow: #000000 2px 6px 5px;
+      z-index:10;
+      transform:scale(var(--overlayTextScale));
     }
   } 
+  .WatchFlix-OverlayBackground{
+    background: var(--overlayColor);
+    opacity:var(--overlayOpacity);
+    position:absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
 
 `;
 var style = document.createElement('style');
@@ -72,6 +83,26 @@ if (style.styleSheet) {
 }
 document.getElementsByTagName('head')[0].appendChild(style);
 
+
+const injectSettings = (isUpdate = 0) => {
+  chrome.storage.sync.get("config", (response) => {
+    config = response.config
+    console.log(config);
+
+    Object.keys(config).forEach((elem) => { document.documentElement.style.setProperty(["--", elem].join(""), config[elem][0]) })
+  });
+}
+
+injectSettings();
+
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "updatePage") {
+    // Your logic here
+    console.log("Received updatePage action");
+    injectSettings(); // Call your internal function
+  }
+});
 
 a = setInterval(() => {
   const mainView = document.querySelector("#main-view")
@@ -179,16 +210,19 @@ const startWatching = (elem) => {
           return;
         }
 
+        const container = document.createElement("div");
+        container.classList.add("WatchFlix-Overlay");
 
         const overlay = document.createElement("div");
-        overlay.classList.add("WatchFlix-Overlay");
+        overlay.classList.add("WatchFlix-OverlayBackground");
 
         const text = document.createElement('h2');
         text.innerText = "You have watched this!";
 
 
-        overlay.appendChild(text);
-        titleElem.appendChild(overlay);
+        container.appendChild(overlay);
+        container.appendChild(text);
+        titleElem.appendChild(container);
 
 
       }

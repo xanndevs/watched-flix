@@ -1,4 +1,25 @@
 let isSettingsOn = false;
+let config = {};
+
+const injectSettings = () => {
+  chrome.storage.sync.get("config", (response) => {
+    config = response.config
+
+    Object.keys(config).forEach((elem) => { getComputedStyle(document.documentElement).setProperty(["--", elem].join(""), config[0]) })
+
+    injectSettingsDOMTree()
+  });
+}
+
+const injectSettingsDomTree = () => {
+  const container = document.getElementById("settingsPanel")
+
+  Object.keys(config).forEach((elem) => {
+    container.appendChild(new SettingsOption(config[elem][2], config[elem][1], config[elem][0], elem));
+  });
+
+}
+
 
 const showData = () => {
   chrome.storage.sync.get("showData", function (allShows) {

@@ -58,6 +58,9 @@
         scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
       }
     }
+    :root, :host {
+      --spacing: 0.25rem;
+    }
   </style>
 </head>
 
@@ -90,10 +93,7 @@
       </div>
       <div class="flex flex-row flex-wrap h-full w-full relative text-[5px] space-x-[4px]">
 
-        <div class="option min-w-12 flex-1 flex flex-row flex-wrap items-center justify-between gap-1">
-          <p>Do this</p>
-          <input class="w-2 h-2 border-none" type="checkbox" name="" id="">
-        </div>
+
 
         <div class="option min-w-12 flex-1 flex flex-row flex-wrap items-center justify-between gap-1">
           <p>Do that</p>
