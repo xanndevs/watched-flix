@@ -1,14 +1,14 @@
 <html>
 
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=3.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script src="src/tailwind.js"></script>
   <style type="text/tailwindcss">
     @theme {
       --color-flixorange: #e10914;
+      --font-bebas: "Bebas Neue", sans-serif;
     }
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
@@ -32,10 +32,19 @@
       font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
     }
 
+    #settingsContainer{
+      input[type=range]{
+        width: 100%;
+      }
+
+    }
+
+    
+
     * {
       --sb-track-color: #000000;
       --sb-thumb-color: #ffffff;
-      --sb-size: 3px;
+      --sb-size: 12px;
     }
 
     *::-webkit-scrollbar {
@@ -50,7 +59,7 @@
     *::-webkit-scrollbar-thumb {
       background: var(--sb-thumb-color);
       border-radius: 8px;
-      border: 1px solid #000000;
+      border: 3px solid #000000;
     }
 
     @supports not selector(::-webkit-scrollbar) {
@@ -58,23 +67,26 @@
         scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
       }
     }
+
     :root, :host {
-      --spacing: 0.25rem;
+      --spacing: 0.083rem;
     }
+
+    
   </style>
 </head>
 
-<body class="w-full text-slate-200 text-sm bg-black p-1 select-none overflow-hidden">
-  <main class="flex flex-col h-full w-full gap-1">
+<body class="w-96 min-h-[600px] h-auto text-slate-200 text-sm bg-black p-3 select-none overflow-hidden">
+  <main class="flex flex-col h-full w-full gap-3">
     <div class="flex flex-row h-auto justify-between items-center px-1 gap-1">
-      <img class="w-auto h-3  aspect-auto" src="src/WatchFlix-long-transparent.png" alt="WatchFlix Logo" />
-      <div class="h-3 rounded-full relative bg-neutral-900 flex-1 flex space-between items-center">
-        <input type="text" name="title" class="w-full relative outline-none ring-0 p-1 pr-4 text-[0.5rem]" id="input" autocomplete="off">
-        <img class="w-3 p-[2px]  h-3 right-0 absolute aspect-auto filter-[brightness(0)invert(100%)] hover:-rotate-12 transition-all duration-150 active:scale-90 cursor-pointer"
+      <a href="https://www.netflix.com/browse/my-list" target="_blank"><img class="w-auto h-9 aspect-auto" src="src/WatchFlix-long-transparent.png" alt="WatchFlix Logo" /></a>
+      <div class="h-8 rounded-full relative bg-neutral-900 flex-1 flex space-between items-center" >
+        <input type="text" name="title" class="w-full relative outline-none ring-0 p-2 pr-10 text-base" id="input" autocomplete="off">
+        <img class="w-8 p-[4px]  h-8 right-1 absolute aspect-auto filter-[brightness(0)invert(100%)] hover:-rotate-12 transition-all duration-150 active:scale-90 cursor-pointer"
           src="src/search.svg" alt="Search button." id="searchButton" />
       </div>
-      <div class="h-3 w-3 rounded-full bg-neutral-900 flex justify-center items-center">
-        <img class="w-fullh-full p-[2px] relative aspect-auto filter-[brightness(0)invert(100%)] hover:rotate-12 transition-all duration-150 active:scale-90 cursor-pointer"
+      <div class="h-8 w-8 rounded-full bg-neutral-900 flex justify-center items-center">
+        <img class="w-full h-full p-1 relative aspect-auto filter-[brightness(0)invert(100%)] hover:rotate-12 transition-all duration-150 active:scale-90 cursor-pointer"
           src="src/settings.svg" alt="Settings button." id="settingsButton"/>
       </div>
 
@@ -82,65 +94,26 @@
 
 
     </div>
-    <div id="content" class="h-auto overflow-x-hidden overflow-y-auto flex flex-row flex-wrap gap-1 justify-center">
+    <div id="content" class="h-auto overflow-x-hidden overflow-y-auto flex flex-row flex-wrap gap-2 justify-center">
     </div>
   </main>
-  <div class="justify-end absolute -bottom-20 left-0 h-20 w-full flex  bg-transparent transition-all duration-250 ease-in-out" id="settingsPanel">
-    <div class="max-w-32 w-full h-full relative bg-neutral-900 rounded-t-md p-2 flex flex-col gap-1">
-      <div class="flex flex-row justify-between text-[10px] content-center h-3 relative">
+  <div class="justify-end absolute -bottom-72 left-0 h-72 w-full flex  bg-transparent transition-all duration-250 ease-in-out" id="settingsPanel">
+    <div class="max-w-96 w-full h-full relative bg-neutral-900 rounded-t-2xl p-4 flex flex-col gap-1">
+      <div class="flex flex-row justify-between text-2xl content-center h-auto relative pb-4 border-b-2">
         <p>Settings</p>
-        <img id="settingsCloseButton" class="w-auto h-full aspect-square p-[2px] filter-[brightness(0)invert(100%)] rounded-full hover:bg-[rgba(255,255,255,0.1)] transition-all duration-150 active:scale-90 cursor-pointer" src="src/cross.svg" alt="Close settings.">
+        <div class="w-auto h-auto relative flex flex-row gap-1">
+          <img id="settingsRestoreButton" class="w-auto h-8 aspect-square p-[2px] filter-[brightness(0)invert(100%)] rounded-full hover:bg-[rgba(255,255,255,0.1)] hover:rotate-90 active:rotate-270 delay-75 active:delay-0 hover:delay-75 transition-all duration-150 active:scale-90 cursor-pointer" src="src/restore.svg" alt="Close settings.">
+          <img id="settingsCloseButton" class="w-auto h-8 aspect-square p-[2px] filter-[brightness(0)invert(100%)] rounded-full hover:bg-[rgba(255,255,255,0.1)] transition-all duration-150 active:scale-90 cursor-pointer" src="src/cross.svg" alt="Close settings.">
+
+        </div>
       </div>
-      <div class="flex flex-row flex-wrap h-full w-full relative text-[5px] space-x-[4px]">
-
-
-
-        <div class="option min-w-12 flex-1 flex flex-row flex-wrap items-center justify-between gap-1">
-          <p>Do that</p>
-          <input class="w-2 h-2 border-none" type="checkbox" name="" id="">
-        </div>
-
-        <div class="option min-w-12 flex-1 flex flex-row flex-wrap items-center justify-between gap-1">
-          <p>Make money</p>
-          <input class="w-2 h-2 border-none" type="checkbox" name="" id="">
-        </div>
-
-         <div class="option min-w-12 flex-1 flex flex-row flex-wrap items-center justify-between gap-1">
-          <p>Be good</p>
-          <input class="w-2 h-2 border-none" type="checkbox" name="" id="">
-        </div>
-
-         <div class="option min-w-12 flex-1 flex flex-row flex-wrap items-center justify-between gap-1">
-          <p>Only ask for stuff</p>
-          <input class="w-2 h-2 border-none" type="checkbox" name="" id="">
-        </div>
-
-         <div class="option min-w-12 flex-1 flex flex-row flex-wrap items-center justify-between gap-1">
-          <p>You gave nothing</p>
-          <input class="w-2 h-2 border-none" type="checkbox" name="" id="">
-        </div>  
-
-         <div class="option min-w-12 flex-1 flex flex-row flex-wrap items-center justify-between gap-1">
-          <p>You DID nothing</p>
-          <input class="w-2 h-2 border-none" type="checkbox" name="" id="">
-        </div>
-
-
-         <div class="option min-w-12 flex-1 flex flex-row flex-wrap items-center justify-between pr-1">
-          <p>I hate you</p>
-          <input class="w-2 h-2 border-none" type="checkbox" name="" id="">
-        </div>
-
-
-
-
-
-
+      <div class="flex flex-row flex-wrap content-start h-full w-full relative text-base space-x-3" id="settingsContainer">
+        <!--Will be injected on runtime-->
       </div>
     </div>
 
   </div>
-  <script src="sidebar.js"></script>
+  <script src="index.js"></script>
 </body>
 
 </html>

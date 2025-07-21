@@ -72,6 +72,7 @@ var css = `
     width: 100%;
     height: 100%;
     pointer-events: none;
+  }
 
 `;
 var style = document.createElement('style');
@@ -87,7 +88,7 @@ document.getElementsByTagName('head')[0].appendChild(style);
 const injectSettings = (isUpdate = 0) => {
   chrome.storage.sync.get("config", (response) => {
     config = response.config
-    console.log(config);
+    //console.log(config);
 
     Object.keys(config).forEach((elem) => { document.documentElement.style.setProperty(["--", elem].join(""), config[elem][0]) })
   });
@@ -99,7 +100,7 @@ injectSettings();
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "updatePage") {
     // Your logic here
-    console.log("Received updatePage action");
+    //console.log("Received updatePage action");
     injectSettings(); // Call your internal function
   }
 });
@@ -206,7 +207,21 @@ const startWatching = (elem) => {
 
       if (elem.includes(showData)) {
         //console.log("Found the target element!")
-        if (titleElem.querySelector(".WatchFlix-Overlay") != null) {
+        chrome.storage.sync.get("config", (config) => {
+          config = config.config
+          if (config.hideWatched[0]){
+            titleElem.parentElement.parentElement.style.opacity  = "0";
+            titleElem.parentElement.parentElement.style.position = "absolute";
+            return
+          }
+          else{
+            titleElem.parentElement.parentElement.style.opacity = "1";
+            titleElem.parentElement.parentElement.style.position = "relative";
+            
+          }
+        })
+        
+        if (titleElem.querySelector(".WatchFlix-Overlay")) {
           return;
         }
 
@@ -235,8 +250,6 @@ const startWatching = (elem) => {
       }
 
     })
-
-
   }
   const getShowDataFromModal = (elem) => {
     let showId = elem.querySelector("div.focus-trap-wrapper.previewModal--wrapper.mini-modal > div > div.previewModal--info > a")

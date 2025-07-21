@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "WatchFlix",
-  "version": "0.3.3",
+  "version": "1.0.0",
   "icons": {
     "128": "src/128x128.png"
   },
@@ -9,7 +9,7 @@
   "action": {
     "default_popup": "index.html",
     "default_icon": "src/WatchFlix-short-black.png",
-    "default_title": "Click to open sidebar"
+    "default_title": "WatchFlix, mark it all!"
   },
   "description": "An extension to hide the things you have watched in your Netflix homepage.",
   "author": "xanndevs",
@@ -23,14 +23,13 @@
     "type": "module"
   },
 
-  
   "permissions": ["sidePanel", "scripting", "activeTab", "storage"],
   "web_accessible_resources": [
      {
     "resources": ["src/WatchFlix-short-transparent.png","src/Flix-transparent.png", "src/Tick-transparent.png"],
     "matches":["https://www.netflix.com/*"]
     }
-  ] 
+  ]
 
 }
 

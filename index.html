@@ -5,9 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script src="src/tailwind.js"></script>
+
   <style type="text/tailwindcss">
     @theme {
       --color-flixorange: #e10914;
+      --font-bebas: "Bebas Neue", sans-serif;
+
     }
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
@@ -27,18 +30,20 @@
     }
     </style>
   <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
     body {
       font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
     }
 
-    #settingsContainer{
-      input[type=range]{
+    #settingsContainer {
+      input[type=range] {
         width: 100%;
       }
 
     }
 
-    
+
 
     * {
       --sb-track-color: #000000;
@@ -67,26 +72,29 @@
       }
     }
 
-    :root, :host {
+    :root,
+    :host {
       --spacing: 0.25rem;
     }
-
-    
   </style>
 </head>
 
 <body class="w-96 min-h-[600px] h-auto text-slate-200 text-sm bg-black p-3 select-none overflow-hidden">
   <main class="flex flex-col h-full w-full gap-3">
     <div class="flex flex-row h-auto justify-between items-center px-1 gap-1">
-      <img class="w-auto h-9 aspect-auto" src="src/WatchFlix-long-transparent.png" alt="WatchFlix Logo" />
-      <div class="h-8 rounded-full relative bg-neutral-900 flex-1 flex space-between items-center" >
-        <input type="text" name="title" class="w-full relative outline-none ring-0 p-2 pr-10 text-base" id="input" autocomplete="off">
-        <img class="w-8 p-[4px]  h-8 right-1 absolute aspect-auto filter-[brightness(0)invert(100%)] hover:-rotate-12 transition-all duration-150 active:scale-90 cursor-pointer"
+      <a href="https://www.netflix.com/browse/my-list" target="_blank"><img class="w-auto h-9 aspect-auto"
+          src="src/WatchFlix-long-transparent.png" alt="WatchFlix Logo" /></a>
+      <div class="h-8 rounded-full relative bg-neutral-900 flex-1 flex space-between items-center">
+        <input type="text" name="title" class="w-full relative outline-none ring-0 p-2 pr-10 text-base" id="input"
+          autocomplete="off" placeholder="Search for shows...">
+        <img
+          class="w-8 p-[4px]  h-8 right-1 absolute aspect-auto filter-[brightness(0)invert(100%)] hover:-rotate-12 transition-all duration-150 active:scale-90 cursor-pointer"
           src="src/search.svg" alt="Search button." id="searchButton" />
       </div>
       <div class="h-8 w-8 rounded-full bg-neutral-900 flex justify-center items-center">
-        <img class="w-full h-full p-1 relative aspect-auto filter-[brightness(0)invert(100%)] hover:rotate-12 transition-all duration-150 active:scale-90 cursor-pointer"
-          src="src/settings.svg" alt="Settings button." id="settingsButton"/>
+        <img
+          class="w-full h-full p-1 relative aspect-auto filter-[brightness(0)invert(100%)] hover:rotate-12 transition-all duration-150 active:scale-90 cursor-pointer"
+          src="src/settings.svg" alt="Settings button." id="settingsButton" />
       </div>
 
 
@@ -96,17 +104,24 @@
     <div id="content" class="h-auto overflow-x-hidden overflow-y-auto flex flex-row flex-wrap gap-2 justify-center">
     </div>
   </main>
-  <div class="justify-end absolute -bottom-72 left-0 h-72 w-full flex  bg-transparent transition-all duration-250 ease-in-out" id="settingsPanel">
+  <div
+    class="justify-end absolute -bottom-72 left-0 h-72 w-full flex  bg-transparent transition-all duration-250 ease-in-out"
+    id="settingsPanel">
     <div class="max-w-96 w-full h-full relative bg-neutral-900 rounded-t-2xl p-4 flex flex-col gap-1">
       <div class="flex flex-row justify-between text-2xl content-center h-auto relative pb-4 border-b-2">
         <p>Settings</p>
         <div class="w-auto h-auto relative flex flex-row gap-1">
-          <img id="settingsRestoreButton" class="w-auto h-8 aspect-square p-[2px] filter-[brightness(0)invert(100%)] rounded-full hover:bg-[rgba(255,255,255,0.1)] hover:rotate-90 active:rotate-270 delay-75 active:delay-0 hover:delay-75 transition-all duration-150 active:scale-90 cursor-pointer" src="src/restore.svg" alt="Close settings.">
-          <img id="settingsCloseButton" class="w-auto h-8 aspect-square p-[2px] filter-[brightness(0)invert(100%)] rounded-full hover:bg-[rgba(255,255,255,0.1)] transition-all duration-150 active:scale-90 cursor-pointer" src="src/cross.svg" alt="Close settings.">
+          <img id="settingsRestoreButton"
+            class="w-auto h-8 aspect-square p-[2px] filter-[brightness(0)invert(100%)] rounded-full hover:bg-[rgba(255,255,255,0.1)] hover:rotate-90 active:rotate-270 delay-75 active:delay-0 hover:delay-75 transition-all duration-150 active:scale-90 cursor-pointer"
+            src="src/restore.svg" alt="Close settings.">
+          <img id="settingsCloseButton"
+            class="w-auto h-8 aspect-square p-[2px] filter-[brightness(0)invert(100%)] rounded-full hover:bg-[rgba(255,255,255,0.1)] transition-all duration-150 active:scale-90 cursor-pointer"
+            src="src/cross.svg" alt="Close settings.">
 
         </div>
       </div>
-      <div class="flex flex-row flex-wrap content-start h-full w-full relative text-base space-x-3" id="settingsContainer">
+      <div class="flex flex-row flex-wrap content-start h-full w-full relative text-base space-x-3"
+        id="settingsContainer">
         <!--Will be injected on runtime-->
       </div>
     </div>

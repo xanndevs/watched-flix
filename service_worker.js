@@ -1,15 +1,12 @@
 // I can probably use extension locales and set a language picker ? but idk if I want to...
 let defaultConfig = {
-  overlayOpacity: [0.95, {type:"range", min:"0",max:"1",step:"0.05"}, "Overlay blur amount"/*  Or chrome.extension.locale???.en-EN.overlayOpacity */],
-  overlayTextScale: [1, {type:"range", min:"0.5",max:"1.5",step:"0.05"}, "Overlay text scale"/*  Or chrome.extension.locale???.en-EN.overlayOpacity */],
-  overlayColor: ["oklch(20.5% 0 0)", {type:"color"}, "Color of overlay"],
+  overlayOpacity: [0.85, {type:"range", min:"0",max:"1",step:"0.05"}, "Overlay blur amount"/*  Or chrome.extension.locale???.en-EN.overlayOpacity */],
+  overlayTextScale: [1, {type:"range", min:"0.5",max:"1.25",step:"0.05"}, "Overlay text scale"/*  Or chrome.extension.locale???.en-EN.overlayOpacity */],
+  overlayColor: ["#680001", {type:"color"}, "Color of overlay"],
+  hideWatched: [false, {type:"checkbox"}, "Hide watched?"],
 }
 
-// Allow users to open the sidebar by clicking the action toolbar icon
-chrome.sidePanel
-  .setPanelBehavior({ openPanelOnActionClick: true })
-  .catch((error) => console.error(error));
-
+chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch((error) => console.error(error));
 chrome.runtime.onInstalled.addListener(async () => {
   for (const cs of chrome.runtime.getManifest().content_scripts) {
     for (const tab of await chrome.tabs.query({url: cs.matches})) {
@@ -32,9 +29,6 @@ chrome.runtime.onInstalled.addListener(async () => {
   }
 });
 
-
-// Check whether new version is installed
-
 chrome.runtime.onInstalled.addListener(function(details){
     if(details.reason == "install"){
         chrome.storage.sync.set({ showData: [] }).then(() => {});
@@ -46,6 +40,9 @@ chrome.runtime.onInstalled.addListener(function(details){
     }
 });
 
+
+
 chrome.action.onClicked.addListener((tab) => {
-  chrome.tabs.create({ url: chrome.runtime.getURL("sidebar.html") });
+  chrome.storage.sync.set({ defaultConfig: defaultConfig }).then(() => {});
+  //chrome.tabs.create({ url: chrome.runtime.getURL("sidebar.html") });
 });

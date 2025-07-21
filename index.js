@@ -51,6 +51,11 @@ var css = `
         }
     }
 
+    input[type="checkbox"] {
+      width:20px;
+      height:20px;
+      border-radius:10px !important;
+    }
 
     
   
@@ -59,6 +64,7 @@ var css = `
 
 
 `;
+
 var style = document.createElement('style');
 
 if (style.styleSheet) {
@@ -72,31 +78,40 @@ document.getElementsByTagName('head')[0].appendChild(style);
 const showData = () => {
   chrome.storage.sync.get("showData", function (allShows) {
     let list = [];
-    console.log(allShows);
-    console.log(allShows["showData"]);
+    //console.log(allShows);
+    //console.log(allShows["showData"]);
 
     let inputData = document.getElementById("input").value.toLowerCase();
+    let filteredShows = [...allShows["showData"].filter((elem) => elem[1].toLowerCase().indexOf(inputData) >= 0)];
 
-    allShows["showData"].forEach(elem => {
-      console.log(elem[1], inputData)
-    });
 
-    allShows["showData"].filter((elem) => elem[1].toLowerCase().indexOf(inputData) >= 0).forEach((element) => {
-      list.push(new Modal(...element));
-      //let listItem = document.createElement("img");
-      //listItem.src = element[2];
-      //listItem.alt = element[1];  
-      //listItem.classList.add(
-      //  "h-auto",
-      //  "w-full",
-      //  "max-w-64",
-      //  "aspect-auto",
-      //  "rounded-lg",
-      //  "cursor-pointer"
-      //);
-      //list.push(listItem);
-    });
+    if (allShows["showData"].length < 1) {
 
+      list.push(new Link("https://www.netflix.com/browse", "Start adding shows!"));
+    }
+    else if (filteredShows.length < 1) {
+      list.push(new Link("https://www.netflix.com/browse", "No result..."))
+    }
+    else {
+
+      filteredShows.forEach((element) => {
+        list.push(new Modal(...element));
+        //let listItem = document.createElement("img");
+        //listItem.src = element[2];
+        //listItem.alt = element[1];  
+        //listItem.classList.add(
+        //  "h-auto",
+        //  "w-full",
+        //  "max-w-64",
+        //  "aspect-auto",
+        //  "rounded-lg",
+        //  "cursor-pointer"
+        //);
+        //list.push(listItem);
+      });
+
+
+    }
     document.getElementById("content").replaceChildren(...list);
   });
 };
@@ -109,9 +124,21 @@ const injectSettings = (isUpdate = false) => {
 
     function doPageUpdate() {
       // Send a message to the content script in the current tab
-      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, { action: "updatePage" });
+      chrome.tabs.query({}, function (tabs) {
+        tabs.forEach((tab) => {
+          chrome.tabs.sendMessage(tab.id, { action: "updatePage" }, (response) => {
+            if (chrome.runtime.lastError) {
+              // Content script not present on this tab — ignore or log
+              //console.debug(`No content script in tab ${tab.id}: ${chrome.runtime.lastError.message}`);
+            } else {
+              // Got response from content script
+              chrome.tabs.sendMessage(tabs[0].id, { action: "updatePage" });
+              //console.log(`Tab ${tab.id} responded:`, response);
+            }
+          });
+        });
       });
+
     }
     doPageUpdate();
     if (!isUpdate)
@@ -121,11 +148,14 @@ const injectSettings = (isUpdate = false) => {
 
 const injectSettingsDOMTree = () => {
   const container = document.getElementById("settingsContainer");
-  console.log(container);
+  //console.log(container);
 
+  let childList = []
   Object.keys(config).forEach((elem) => {
-    container.appendChild(new SettingsOption(config[elem][2], config[elem][1], config[elem][0], elem));
+    childList.push(new SettingsOption(config[elem][2], config[elem][1], config[elem][0], elem));
   });
+
+  container.replaceChildren(...childList);
 
 }
 
@@ -137,7 +167,7 @@ chrome.storage.onChanged.addListener(function (changes, area) {
 });
 
 document.getElementById("input").addEventListener("keypress", function (event) {
-  console.log()
+  //console.log()
   if (event.key === "Enter") {
     // Cancel the default action, if needed
     event.preventDefault();
@@ -163,6 +193,16 @@ document.getElementById("settingsCloseButton").addEventListener("click", functio
 
 });
 
+document.getElementById("settingsRestoreButton").addEventListener("click", function (event) {
+  chrome.storage.sync.get("defaultConfig", (res) => {
+    let defaultConfig = res.defaultConfig;
+    chrome.storage.sync.set({ config: defaultConfig })
+    config = defaultConfig;
+    injectSettings(isUpdate = false);
+  });
+
+});
+
 const toggleSettingsMenu = () => {
   isSettingsOn = !isSettingsOn;
 
@@ -174,6 +214,41 @@ const clickHandler = () => {
   showData();
 }
 
+class Link {
+
+  constructor(url, message) {
+    let noShowMessageURL = document.createElement("a");
+    noShowMessageURL.href = url;
+    noShowMessageURL.target = "_blank";
+    noShowMessageURL.classList.add(
+      "mt-[50%]",
+      "relative",
+      "align-center",
+      "flex",
+      "flex-col",
+      "justify-center",
+      "p-1"
+    )
+
+    let noShowMessage = document.createElement("p")
+    noShowMessage.innerText = message;
+    noShowMessage.classList.add(
+      "text-2xl",
+      "color-neutral-400",
+      "align-center",
+      "font-bebas",
+      "underline",
+      "underline-offset-2",
+      "tracking-wide",
+      "font-stretch-semi-expanded",
+      "tracking-wide"
+      
+    )
+
+    noShowMessageURL.appendChild(noShowMessage);
+    return noShowMessageURL;
+  }
+}""
 class Modal {
 
   constructor(id, title, imageUrl) {
@@ -230,12 +305,12 @@ class Modal {
     this.removeIcon = document.createElement("img");
     this.removeIcon.src = "src/delete.svg";
     this.removeIcon.classList.add("h-6", "w-6");
-    this.removeIcon.style.filter = "brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(0%) hue-rotate(148deg) brightness(102%) contrast(103%)";
+    this.removeIcon.style.filter = "brightness(0) invert(100%) ";
 
     this.redirectIcon = document.createElement("img");
     this.redirectIcon.src = "src/redirect.svg";
     this.redirectIcon.classList.add("h-6", "w-6");
-    this.redirectIcon.style.filter = "brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(0%) hue-rotate(148deg) brightness(102%) contrast(103%)";
+    this.redirectIcon.style.filter = "brightness(0) invert(100%) )";
 
     this.redirectActionButton = document.createElement("a");
     this.redirectActionButton.href = `https://www.netflix.com/title/${id}`;
@@ -314,12 +389,11 @@ class Modal {
     });
   }
 }
-
 class SettingsOption {
 
   constructor(textPhrase, inputOptions, inputValue, inputIdentifier) {
     this.wrapper = document.createElement("div")
-    this.wrapper.classList.add("option", "min-w-40", "flex-1", "h-auto", "py-1", "flex", "flex-row", "flex-wrap", "items-start", "justify-between", "gap-1");
+    this.wrapper.classList.add("option", "min-w-40", "flex-1", "h-auto", "py-1", "flex", "flex-row", "flex-wrap", "items-start", "justify-between", "gap-1", "!place-items-center");
     this.wrapper.name = inputIdentifier;
 
     this.text = document.createElement("p");
@@ -331,6 +405,13 @@ class SettingsOption {
     this.input.value = inputValue;
     this.input.id = inputIdentifier;
     this.input.classList.add("border-none", "h-2")
+
+    if (this.input.type == "checkbox") {
+      this.input.checked = inputValue;
+
+    }
+
+
     this.input.addEventListener("change", (e) => this.updateSettings(e, inputIdentifier));
 
     this.wrapper.appendChild(this.text);
@@ -339,13 +420,22 @@ class SettingsOption {
     return this.wrapper;
   }
   updateSettings(e, id) {
-    console.log(e);
-    config[id] = [e.target.value, config[id][1], config[id][2]];
-    chrome.storage.sync.set({ "config": config });
-    injectSettings(true);
+    //console.log(e);
+    chrome.storage.sync.get("config", (res) => {
+      let currentConfig = res.config;
+
+      if (this.input.type == "checkbox") {
+        currentConfig[id] = [e.target.checked, config[id][1], config[id][2]];
+      }
+      else {
+        currentConfig[id] = [e.target.value, config[id][1], config[id][2]];
+      }
+
+      config = currentConfig
+      chrome.storage.sync.set({ "config": config }, injectSettings(true));
+    })
   }
 }
-
 
 
 showData();
